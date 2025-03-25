@@ -33,6 +33,57 @@ def welcome_page(page: ft.Page):
 
     page.add(content)
 
+def add_component(e, components, component_type, component_value, connection_type_dropdown, result_text, page):
+    try:
+        value = float(component_value.value)
+        connection = connection_type_dropdown.value.lower()
+        component = {
+            "type": component_type.value,
+            "value": value,
+            "connection": connection
+        }
+        components.append(component)
+        result_text.value = f"Componente agregado: {component['type']} = {component['value']} ({connection.capitalize()})"
+        page.update()
+    except ValueError:
+        result_text.value = "Error: Ingresa un valor numérico válido."
+        page.update()
+
+def calculate_circuit(e, components, result_text, page):
+    if not components:
+        result_text.value = "Error: No hay componentes en el circuito."
+        page.update()
+        return
+
+    resistances_series = []
+    resistances_parallel = []
+    capacitances_series = []
+    capacitances_parallel = []
+
+    for component in components:
+        if component["type"] == "Resistencia":
+            if component["connection"] == "serie":
+                resistances_series.append(component["value"])
+            else:
+                resistances_parallel.append(component["value"])
+        elif component["type"] == "Capacitor":
+            if component["connection"] == "serie":
+                capacitances_series.append(component["value"])
+            else:
+                capacitances_parallel.append(component["value"])
+
+    total_resistance = sum(resistances_series) + (1 / sum(1 / r for r in resistances_parallel) if resistances_parallel else 0)
+    total_capacitance = sum(capacitances_parallel) + (1 / sum(1 / c for c in capacitances_series) if capacitances_series else 0)
+
+    result = []
+    if resistances_series or resistances_parallel:
+        result.append(f"Resistencia equivalente: {total_resistance:.2f} Ohmios")
+    if capacitances_series or capacitances_parallel:
+        result.append(f"Capacitancia equivalente: {total_capacitance:.2f} Faradios")
+
+    result_text.value = "\n".join(result)
+    page.update()
+
 def simulator_page(page: ft.Page):
     page.controls.clear()
     page.title = "Simulador de Circuitos"
@@ -53,9 +104,15 @@ def simulator_page(page: ft.Page):
         value="Serie",
         label="Conexión"
     )
-    add_button = ft.ElevatedButton("Agregar componente", on_click=lambda e: None)  
-    calculate_button = ft.ElevatedButton("Calcular", on_click=lambda e: None)  
-    reset_button = ft.ElevatedButton("Resetear", on_click=lambda e: None)  
+    add_button = ft.ElevatedButton(
+        "Agregar componente",
+        on_click=lambda e: add_component(e, components, component_type, component_value, connection_type_dropdown, result_text, page)
+    )
+    calculate_button = ft.ElevatedButton(
+        "Calcular",
+        on_click=lambda e: calculate_circuit(e, components, result_text, page)
+    )
+    reset_button = ft.ElevatedButton("Resetear", on_click=lambda e: None)  # Placeholder
     result_text = ft.Text(style=ft.TextThemeStyle.HEADLINE_SMALL)
     circuit_diagram = ft.Column(spacing=10)
 
