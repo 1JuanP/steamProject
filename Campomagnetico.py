@@ -1,6 +1,18 @@
 import flet as ft
 import math
 
+def calculate_field_direction(P, C, q):
+    PC = (C[0] - P[0], C[1] - P[1])
+    dist_PC = math.sqrt(PC[0]**2 + PC[1]**2)
+    if dist_PC < 1e-6:
+        return (0, 0)
+    direction = (PC[0] / dist_PC, PC[1] / dist_PC)
+    
+    if q > 0:
+        return (-direction[1], direction[0])
+    else:
+        return (direction[0], direction[1])
+
 def main(page: ft.Page):
     page.title = "Simulador de Campo Magnético"
     page.window_width = 800
@@ -138,6 +150,7 @@ def main(page: ft.Page):
             carga_sign = 1
             carga_color = ft.colors.RED
             carga.bgcolor = carga_color
+            update_arrows()
             page.update()
 
         def set_negative(e):
@@ -145,6 +158,7 @@ def main(page: ft.Page):
             carga_sign = -1
             carga_color = ft.colors.BLUE
             carga.bgcolor = carga_color
+            update_arrows()
             page.update()
 
         positive_button = ft.ElevatedButton(
@@ -188,6 +202,7 @@ def main(page: ft.Page):
                 carga_gesture.top = (carga_gesture.top or 0) + delta_y
                 last_x = e.global_x
                 last_y = e.global_y
+                update_arrows()
                 page.update()
 
         def on_pan_end(e: ft.DragEndEvent):
@@ -265,6 +280,18 @@ def main(page: ft.Page):
         )
 
         main_stack.controls.append(centered_content)
+
+        def update_arrows():
+            carga_x = carga_gesture.left + carga_size / 2
+            carga_y = carga_gesture.top + carga_size / 2
+            C = (carga_x, carga_y)
+            for arrow_container in arrows:
+                P = (arrow_container.left, arrow_container.top)
+                dx, dy = calculate_field_direction(P, C, carga_sign)
+                angle = math.atan2(dy, dx)
+                arrow_container.content.rotate = angle
+
+        update_arrows()
 
         return ft.View("/simulator", [main_stack], bgcolor=ft.colors.TRANSPARENT)
 
