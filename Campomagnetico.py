@@ -117,10 +117,11 @@ def main(page: ft.Page):
                 stack.controls.append(arrow_container)
 
         carga_size = 30
+        carga_color = ft.colors.RED
         carga = ft.Container(
             width=carga_size,
             height=carga_size,
-            bgcolor=ft.colors.RED,
+            bgcolor=carga_color,
             border_radius=carga_size / 2,
             shadow=ft.BoxShadow(blur_radius=5, color=ft.colors.WHITE)
         )
@@ -129,6 +130,48 @@ def main(page: ft.Page):
         dragging = False
         last_x = 0
         last_y = 0
+
+        carga_sign = 1
+
+        def set_positive(e):
+            nonlocal carga_sign, carga_color
+            carga_sign = 1
+            carga_color = ft.colors.RED
+            carga.bgcolor = carga_color
+            page.update()
+
+        def set_negative(e):
+            nonlocal carga_sign, carga_color
+            carga_sign = -1
+            carga_color = ft.colors.BLUE
+            carga.bgcolor = carga_color
+            page.update()
+
+        positive_button = ft.ElevatedButton(
+            "Polo Norte",
+            on_click=set_positive,
+            style=ft.ButtonStyle(
+                bgcolor=ft.colors.RED_700,
+                color=ft.colors.WHITE,
+                elevation=5,
+                overlay_color=ft.colors.RED_500
+            )
+        )
+        negative_button = ft.ElevatedButton(
+            "Polo Sur",
+            on_click=set_negative,
+            style=ft.ButtonStyle(
+                bgcolor=ft.colors.BLUE_700,
+                color=ft.colors.WHITE,
+                elevation=5,
+                overlay_color=ft.colors.BLUE_500
+            )
+        )
+        buttons_row = ft.Row(
+            [positive_button, negative_button],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=20
+        )
 
         def on_pan_start(e: ft.DragStartEvent):
             nonlocal dragging, last_x, last_y
@@ -204,6 +247,8 @@ def main(page: ft.Page):
                 back_button,
                 ft.Container(height=20),
                 marco,
+                ft.Container(height=20),
+                buttons_row,
                 ft.Container(height=20),
                 intensity_label,
                 intensity_slider
