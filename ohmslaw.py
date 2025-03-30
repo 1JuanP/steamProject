@@ -119,6 +119,7 @@ def principal(pagina: ft.Page):
         border_radius=10,
         color="#E0E0E0",
     )
+
     indicador_dificultad = ft.Container(
         content=ft.Icon(ft.icons.CIRCLE, color="#00C853"),
         alignment=ft.alignment.center_right,
@@ -134,6 +135,7 @@ def principal(pagina: ft.Page):
         color="#E0E0E0",
         border_color="#0F3460",
     )
+
     boton_enviar = ft.ElevatedButton(
         "Enviar",
         on_click=verificar_respuesta,
@@ -141,6 +143,7 @@ def principal(pagina: ft.Page):
         color="#E0E0E0",
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)),
     )
+
     texto_retroalimentacion = ft.Text(size=14, italic=True)
     respuesta_correcta = ft.Text(visible=False)
 
@@ -152,6 +155,7 @@ def principal(pagina: ft.Page):
     entrada_corriente = ft.TextField(label="Corriente (I)", width=150, bgcolor="#16213E", border_radius=5, color="#E0E0E0")
     entrada_r1 = ft.TextField(label="R1 (Ω)", width=150, bgcolor="#16213E", border_radius=5, color="#E0E0E0")
     entrada_r2 = ft.TextField(label="R2 (Ω)", width=150, bgcolor="#16213E", border_radius=5, color="#E0E0E0")
+
     selector_combinacion = ft.Dropdown(
         label="Tipo de Circuito",
         options=[ft.dropdown.Option(clave) for clave in ["serie", "paralelo"]],
@@ -168,7 +172,81 @@ def principal(pagina: ft.Page):
         color="#E0E0E0",
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)),
     )
+
     resultado_voltaje = ft.Text(size=14, color="#BB86FC")
     resultado_corriente = ft.Text(size=14, color="#BB86FC")
     resultado_resistencia = ft.Text(size=14, color="#BB86FC")
     resultado_potencia = ft.Text(size=14, color="#BB86FC")
+
+    pagina.add(
+        ft.Row(
+            [
+                ft.Container(
+                    content=ft.Column(
+                        [
+                            ft.Row(
+                                [
+                                    ft.Text("Problema de Física", size=20, weight=ft.FontWeight.BOLD, color="#E0E0E0"),
+                                    indicador_dificultad,
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            ),
+                            selector_dificultad,
+                            ft.Container(
+                                content=texto_problema,
+                                padding=10,
+                                bgcolor="#16213E",
+                                border_radius=10,
+                            ),
+                            campo_respuesta_usuario,
+                            boton_enviar,
+                            texto_retroalimentacion,
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=15,
+                    ),
+                    padding=20,
+                    bgcolor="#0F3460",
+                    border_radius=15,
+                    width=400,
+                    gradient=ft.LinearGradient(
+                        begin=ft.Alignment(-1, -1),
+                        end=ft.Alignment(1, 1),
+                        colors=["#0F3460", "#16213E"],
+                    ),
+                ),
+                ft.Container(
+                    content=ft.Column(
+                        [
+                            ft.Text("Resolvedor de la Ley de Ohm", size=20, weight=ft.FontWeight.BOLD, color="#E0E0E0"),
+                            entrada_voltaje,
+                            entrada_corriente,
+                            entrada_r1,
+                            entrada_r2,
+                            selector_combinacion,
+                            boton_calcular,
+                            ft.Row([ft.Text("V:", color="#E0E0E0"), resultado_voltaje], spacing=5),
+                            ft.Row([ft.Text("I:", color="#E0E0E0"), resultado_corriente], spacing=5),
+                            ft.Row([ft.Text("R:", color="#E0E0E0"), resultado_resistencia], spacing=5),
+                            ft.Row([ft.Text("P:", color="#E0E0E0"), resultado_potencia], spacing=5),
+                        ],
+                        alignment=ft.MainAxisAlignment.START,
+                        spacing=15,
+                    ),
+                    padding=20,
+                    bgcolor="#0F3460",
+                    border_radius=15,
+                    width=300,
+                    gradient=ft.LinearGradient(
+                        begin=ft.Alignment(-1, -1),
+                        end=ft.Alignment(1, 1),
+                        colors=["#0F3460", "#16213E"],
+                    ),
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            spacing=20,
+        )
+    )
+
+ft.app(target=principal)
