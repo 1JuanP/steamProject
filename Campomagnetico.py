@@ -9,9 +9,9 @@ def calculate_field_direction(P, C, q):
     direction = (PC[0] / dist_PC, PC[1] / dist_PC)
     
     if q > 0:
-        return (-direction[1], direction[0])
+        return (0, -1)
     else:
-        return (direction[0], direction[1])
+        return (-direction[1], direction[0])
 
 def main(page: ft.Page):
     page.title = "Simulador de Campo Magnético"
