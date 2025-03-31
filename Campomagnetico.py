@@ -146,17 +146,17 @@ def main(page: ft.Page):
         dragging = False
         last_x = 0
         last_y = 0
-        carga_sign = 1
+        carga_sign = -1
         def set_positive(e):
             nonlocal carga_sign, carga_color
-            carga_sign = 1
+            carga_sign = -1
             carga_color = ft.colors.RED
             carga.bgcolor = carga_color
             update_arrows()
             page.update()
         def set_negative(e):
             nonlocal carga_sign, carga_color
-            carga_sign = -1
+            carga_sign = 1
             carga_color = ft.colors.BLUE
             carga.bgcolor = carga_color
             update_arrows()
