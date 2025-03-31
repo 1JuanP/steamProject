@@ -252,8 +252,7 @@ def main(page: ft.Page):
         def update_intensity(e):
             intensity = intensity_slider.value
             intensity_label.value = f"Intensidad del Campo: {int(intensity)}%"
-            for arrow_container in arrows:
-                arrow_container.content.opacity = intensity / 100
+            update_arrows()
             page.update()
         intensity_slider.on_change = update_intensity
         simulator_content = ft.Column(
@@ -282,11 +281,20 @@ def main(page: ft.Page):
             carga_x = carga_gesture.left + carga_size / 2
             carga_y = carga_gesture.top + carga_size / 2
             C = (carga_x, carga_y)
+            centro_x = marco_width / 2
+            centro_y = marco_height / 2
+            distancia_max = math.sqrt((centro_x - border_width)**2 + (centro_y - border_width)**2)
             for arrow_container in arrows:
                 P = (arrow_container.left + arrow_size / 2, arrow_container.top + arrow_size / 2)
                 dx, dy = calculate_field_direction(P, C, carga_sign)
                 angle = math.atan2(dy, dx)
                 arrow_container.content.rotate = angle
+                distancia = math.sqrt((P[0] - C[0])**2 + (P[1] - C[1])**2)
+                distancia_normalizada = distancia / distancia_max
+                opacidad_distancia = max(0.1, 1 - distancia_normalizada)
+                intensidad_global = intensity_slider.value / 100
+                opacidad_final = opacidad_distancia * intensidad_global
+                arrow_container.content.opacity = opacidad_final
         update_arrows()
         return ft.View("/simulator", [main_stack], bgcolor=ft.colors.TRANSPARENT)
 
